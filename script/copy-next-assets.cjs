@@ -21,6 +21,9 @@ async function modifyHtmlFiles(paths) {
         if (['.html', '.css', '.txt', '.js'].includes(path.extname(file))) {
             let content = await readFile(file, 'utf8');
             content = content.replace(/\/_nuxt\//g, '/public/');
+            if (path.extname(file) === '.html') {
+                content = content.replace('/_payload.json', '/payload.json');
+            }
             await writeFile(file, content, 'utf8');
         }
     }
@@ -35,6 +38,12 @@ getFiles(path.resolve('docs')).then(res => {
         const newDir = path.resolve('docs/public')
         if (fs.existsSync(oldDir)) {
             fsExtra.renameSync(oldDir, newDir)
+        }
+
+        const oldPayload = path.resolve('docs/_payload.json')
+        const newPayload = path.resolve('docs/payload.json')
+        if (fs.existsSync(oldPayload)) {
+            fsExtra.renameSync(oldPayload, newPayload)
         }
     })
 })
